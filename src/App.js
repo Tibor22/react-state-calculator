@@ -10,6 +10,7 @@ function App() {
   const [recall, setRecall] = useState(null);
 
   function renderLeftSide(e) {
+    if (e.target.classList.contains("numbers")) return;
     if (e.target.innerText === "Clear") return clearLeftState();
     if (e.target.innerText === "Recall") return setLeftNum(recall);
     if (e.target.innerText === "." && String(leftNum).includes(".")) return;
@@ -27,7 +28,7 @@ function App() {
   }
 
   function renderRightSide(e) {
-    console.log(String(rightNum).includes("."));
+    if (e.target.classList.contains("numbers")) return;
     if (e.target.innerText === "Clear") return clearRightState();
     if (e.target.innerText === "Recall") return setRightNum(recall);
     if (e.target.innerText === "." && String(rightNum).includes(".")) return;
@@ -45,9 +46,11 @@ function App() {
     }
   }
   function renderOperator(e) {
+    if (e.target.classList.contains("numbers")) return;
     setOperator(e.target.innerText);
   }
   function renderResult(e) {
+    if (e.target.classList.contains("numbers")) return;
     setResult(
       isNaN(eval(leftNum + operator + rightNum))
         ? "Invalid"
