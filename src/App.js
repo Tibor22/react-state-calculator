@@ -9,40 +9,27 @@ function App() {
   const [result, setResult] = useState(0);
   const [recall, setRecall] = useState(null);
 
-  function renderLeftSide(e) {
+  function renderCalc(e) {
     if (e.target.classList.contains("numbers")) return;
-    if (e.target.innerText === "Clear") return clearLeftState();
-    if (e.target.innerText === "Recall") return setLeftNum(recall);
-    if (e.target.innerText === "." && String(leftNum).includes(".")) return;
+    const isRight = e.target
+      .closest(".numbers")
+      .classList.contains("panel-right");
+    const calcNum = isRight ? rightNum : leftNum;
+    if (e.target.innerText === "." && String(calcNum).includes(".")) return;
     if (
-      String(leftNum).length === 1 &&
-      leftNum === 0 &&
+      String(calcNum).length === 1 &&
+      calcNum === 0 &&
       e.target.innerText === "."
     ) {
-      setLeftNum("0.");
+      isRight ? setRightNum("0.") : setLeftNum("0.");
     } else {
-      setLeftNum(
-        leftNum === 0 ? +e.target.innerText : leftNum + e.target.innerText
-      );
-    }
-  }
-
-  function renderRightSide(e) {
-    if (e.target.classList.contains("numbers")) return;
-    if (e.target.innerText === "Clear") return clearRightState();
-    if (e.target.innerText === "Recall") return setRightNum(recall);
-    if (e.target.innerText === "." && String(rightNum).includes(".")) return;
-
-    if (
-      String(rightNum).length === 1 &&
-      rightNum === 0 &&
-      e.target.innerText === "."
-    ) {
-      setRightNum("0.");
-    } else {
-      setRightNum(
-        rightNum === 0 ? +e.target.innerText : rightNum + e.target.innerText
-      );
+      isRight
+        ? setRightNum(
+            calcNum === 0 ? +e.target.innerText : calcNum + e.target.innerText
+          )
+        : setLeftNum(
+            calcNum === 0 ? +e.target.innerText : calcNum + e.target.innerText
+          );
     }
   }
   function renderOperator(e) {
@@ -58,18 +45,29 @@ function App() {
     );
   }
 
-  function clearLeftState() {
+  function clearLeftState(e) {
+    e.stopPropagation();
     setLeftNum(0);
   }
-  function clearRightState() {
+  function clearRightState(e) {
+    e.stopPropagation();
     setRightNum(0);
+  }
+
+  function setLeftRecall(e) {
+    e.stopPropagation();
+    setLeftNum(recall);
+  }
+  function setRightRecall(e) {
+    e.stopPropagation();
+    setRightNum(recall);
   }
 
   return (
     <div className="calculator">
-      <div className="panel">
+      <div className="panel ">
         <p>{leftNum}</p>
-        <div onClick={renderLeftSide} className="numbers">
+        <div onClick={renderCalc} className="numbers panel-left">
           <button>1</button>
           <button>2</button>
           <button>3</button>
@@ -81,8 +79,8 @@ function App() {
           <button>9</button>
           <button>0</button>
           <button>.</button>
-          <button>Clear</button>
-          <button>Recall</button>
+          <button onClick={clearLeftState}>Clear</button>
+          <button onClick={setLeftRecall}>Recall</button>
         </div>
       </div>
 
@@ -96,9 +94,9 @@ function App() {
         </div>
       </div>
 
-      <div onClick={renderRightSide} className="panel">
+      <div onClick={renderCalc} className="panel">
         <p>{rightNum}</p>
-        <div className="numbers">
+        <div className="numbers panel-right">
           <button>1</button>
           <button>2</button>
           <button>3</button>
@@ -110,8 +108,8 @@ function App() {
           <button>9</button>
           <button>0</button>
           <button>.</button>
-          <button>Clear</button>
-          <button>Recall</button>
+          <button onClick={clearRightState}>Clear</button>
+          <button onClick={setRightRecall}>Recall</button>
         </div>
       </div>
       <div onClick={renderResult} className="panel answer">
